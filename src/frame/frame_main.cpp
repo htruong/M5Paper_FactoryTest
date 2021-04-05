@@ -1,12 +1,16 @@
 #include "frame_main.h"
 #include "frame_setting.h"
-#include "frame_keyboard.h"
+#ifdef INCLUDE_FACTORYTESTS
 #include "frame_factorytest.h"
-#include "frame_wifiscan.h"
-#include "frame_lifegame.h"
-#include "frame_fileindex.h"
 #include "frame_compare.h"
+#include "frame_keyboard.h"
+#endif
+#ifdef INCLUDE_HOMESAMPLE
 #include "frame_home.h"
+#endif
+#include "frame_wifiscan.h"
+#include "frame_fileindex.h"
+#include "frame_feedslisting.h"
 
 enum
 {
@@ -35,6 +39,7 @@ void key_setting_cb(epdgui_args_vector_t &args)
     *((int*)(args[0])) = 0;
 }
 
+#ifdef INCLUDE_FACTORYTESTS
 void key_keyboard_cb(epdgui_args_vector_t &args)
 {
     Frame_Base *frame = EPDGUI_GetFrame("Frame_Keyboard");
@@ -46,7 +51,9 @@ void key_keyboard_cb(epdgui_args_vector_t &args)
     EPDGUI_PushFrame(frame);
     *((int*)(args[0])) = 0;
 }
+#endif
 
+#ifdef INCLUDE_FACTORYTESTS
 void key_factorytest_cb(epdgui_args_vector_t &args)
 {
     Frame_Base *frame = EPDGUI_GetFrame("Frame_FactoryTest");
@@ -58,6 +65,7 @@ void key_factorytest_cb(epdgui_args_vector_t &args)
     EPDGUI_PushFrame(frame);
     *((int*)(args[0])) = 0;
 }
+#endif
 
 void key_wifiscan_cb(epdgui_args_vector_t &args)
 {
@@ -71,14 +79,10 @@ void key_wifiscan_cb(epdgui_args_vector_t &args)
     *((int*)(args[0])) = 0;
 }
 
-void key_lifegame_cb(epdgui_args_vector_t &args)
+void key_test_cb(epdgui_args_vector_t &args)
 {
-    Frame_Base *frame = EPDGUI_GetFrame("Frame_Lifegame");
-    if(frame == NULL)
-    {
-        frame = new Frame_Lifegame();
-        EPDGUI_AddFrame("Frame_Lifegame", frame);
-    }
+    Frame_Base *frame = new Frame_FeedsListing("foo.txt");
+    log_d("Opening %s", "foo.txt");
     EPDGUI_PushFrame(frame);
     *((int*)(args[0])) = 0;
 }
@@ -90,6 +94,7 @@ void key_sdfile_cb(epdgui_args_vector_t &args)
     *((int*)(args[0])) = 0;
 }
 
+#ifdef INCLUDE_FACTORYTESTS
 void key_compare_cb(epdgui_args_vector_t &args)
 {
     Frame_Base *frame = EPDGUI_GetFrame("Frame_Compare");
@@ -101,7 +106,9 @@ void key_compare_cb(epdgui_args_vector_t &args)
     EPDGUI_PushFrame(frame);
     *((int*)(args[0])) = 0;
 }
+#endif
 
+#ifdef INCLUDE_HOMESAMPLE
 void key_home_cb(epdgui_args_vector_t &args)
 {
     Frame_Base *frame = EPDGUI_GetFrame("Frame_Home");
@@ -113,7 +120,7 @@ void key_home_cb(epdgui_args_vector_t &args)
     EPDGUI_PushFrame(frame);
     *((int*)(args[0])) = 0;
 }
-
+#endif
 
 Frame_Main::Frame_Main(void): Frame_Base(false)
 {
@@ -144,17 +151,21 @@ Frame_Main::Frame_Main(void): Frame_Base(false)
     _key[kKeySetting]->AddArgs(EPDGUI_Button::EVENT_RELEASED, 0, (void*)(&_is_run));
     _key[kKeySetting]->Bind(EPDGUI_Button::EVENT_RELEASED, key_setting_cb);
 
+#ifdef INCLUDE_FACTORYTESTS
     _key[kKeyKeyboard]->CanvasNormal()->pushImage(0, 0, 92, 92, ImageResource_main_icon_keyboard_92x92);
     *(_key[kKeyKeyboard]->CanvasPressed()) = *(_key[kKeyKeyboard]->CanvasNormal());
     _key[kKeyKeyboard]->CanvasPressed()->ReverseColor();
     _key[kKeyKeyboard]->AddArgs(EPDGUI_Button::EVENT_RELEASED, 0, (void*)(&_is_run));
     _key[kKeyKeyboard]->Bind(EPDGUI_Button::EVENT_RELEASED, key_keyboard_cb);
+#endif
 
+#ifdef INCLUDE_FACTORYTESTS
     _key[kKeyFactoryTest]->CanvasNormal()->pushImage(0, 0, 92, 92, ImageResource_main_icon_factorytest_92x92);
     *(_key[kKeyFactoryTest]->CanvasPressed()) = *(_key[kKeyFactoryTest]->CanvasNormal());
     _key[kKeyFactoryTest]->CanvasPressed()->ReverseColor();
     _key[kKeyFactoryTest]->AddArgs(EPDGUI_Button::EVENT_RELEASED, 0, (void*)(&_is_run));
     _key[kKeyFactoryTest]->Bind(EPDGUI_Button::EVENT_RELEASED, key_factorytest_cb);
+#endif
 
     _key[kKeyWifiScan]->CanvasNormal()->pushImage(0, 0, 92, 92, ImageResource_main_icon_wifi_92x92);
     *(_key[kKeyWifiScan]->CanvasPressed()) = *(_key[kKeyWifiScan]->CanvasNormal());
@@ -166,7 +177,7 @@ Frame_Main::Frame_Main(void): Frame_Base(false)
     *(_key[kKeyLifeGame]->CanvasPressed()) = *(_key[kKeyLifeGame]->CanvasNormal());
     _key[kKeyLifeGame]->CanvasPressed()->ReverseColor();
     _key[kKeyLifeGame]->AddArgs(EPDGUI_Button::EVENT_RELEASED, 0, (void*)(&_is_run));
-    _key[kKeyLifeGame]->Bind(EPDGUI_Button::EVENT_RELEASED, key_lifegame_cb);
+    _key[kKeyLifeGame]->Bind(EPDGUI_Button::EVENT_RELEASED, key_test_cb);
 
     _key[kKeySDFile]->CanvasNormal()->pushImage(0, 0, 92, 92, ImageResource_main_icon_sdcard_92x92);
     *(_key[kKeySDFile]->CanvasPressed()) = *(_key[kKeySDFile]->CanvasNormal());
@@ -174,18 +185,21 @@ Frame_Main::Frame_Main(void): Frame_Base(false)
     _key[kKeySDFile]->AddArgs(EPDGUI_Button::EVENT_RELEASED, 0, (void*)(&_is_run));
     _key[kKeySDFile]->Bind(EPDGUI_Button::EVENT_RELEASED, key_sdfile_cb);
 
+#ifdef INCLUDE_FACTORYTESTS
     _key[kKeyCompare]->CanvasNormal()->pushImage(0, 0, 92, 92, ImageResource_main_icon_compare_92x92);
     *(_key[kKeyCompare]->CanvasPressed()) = *(_key[kKeyCompare]->CanvasNormal());
     _key[kKeyCompare]->CanvasPressed()->ReverseColor();
     _key[kKeyCompare]->AddArgs(EPDGUI_Button::EVENT_RELEASED, 0, (void*)(&_is_run));
     _key[kKeyCompare]->Bind(EPDGUI_Button::EVENT_RELEASED, key_compare_cb);
+#endif
 
+#ifdef INCLUDE_HOMESAMPLE
     _key[kKeyHome]->CanvasNormal()->pushImage(0, 0, 92, 92, ImageResource_main_icon_home_92x92);
     *(_key[kKeyHome]->CanvasPressed()) = *(_key[kKeyHome]->CanvasNormal());
     _key[kKeyHome]->CanvasPressed()->ReverseColor();
     _key[kKeyHome]->AddArgs(EPDGUI_Button::EVENT_RELEASED, 0, (void*)(&_is_run));
     _key[kKeyHome]->Bind(EPDGUI_Button::EVENT_RELEASED, key_home_cb);
-
+#endif
     _time = 0;
     _next_update_time = 0;
 }
@@ -249,7 +263,7 @@ void Frame_Main::AppName(m5epd_update_mode_t mode)
         _names->drawString("Storage", 20 + 46, 16);
         _names->drawString("Compare", 20 + 46 + 136, 16);
         _names->drawString("Home", 20 + 46 + 2 * 136, 16);
-        _names->drawString("LifeGame", 20 + 46 + 3 * 136, 16);
+        _names->drawString("Zenreader", 20 + 46 + 3 * 136, 16);
     }
     _names->pushCanvas(0, 337, mode);
 }
@@ -264,7 +278,7 @@ void Frame_Main::StatusBar(m5epd_update_mode_t mode)
     _bar->fillCanvas(0);
     _bar->drawFastHLine(0, 43, 540, 15);
     _bar->setTextDatum(CL_DATUM);
-    _bar->drawString("M5Paper", 10, 27);
+    _bar->drawString("ZenReader", 10, 27);
 
     // Battery
     _bar->setTextDatum(CR_DATUM);

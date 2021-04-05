@@ -9,7 +9,6 @@
 #include "frame_factorytest.h"
 #include "frame_wifiscan.h"
 #include "frame_wifipassword.h"
-#include "frame_lifegame.h"
 #include "frame_fileindex.h"
 #include "frame_txtreader.h"
 #include "frame_compare.h"

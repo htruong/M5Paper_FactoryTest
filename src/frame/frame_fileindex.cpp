@@ -89,7 +89,7 @@ void Frame_FileIndex::listDir(fs::FS &fs, const char *dirname)
         return;
     }
 
-    std::vector<File> floders;
+    std::vector<File> folders;
     std::vector<File> files;
 
     File file = root.openNextFile();
@@ -97,7 +97,7 @@ void Frame_FileIndex::listDir(fs::FS &fs, const char *dirname)
     {
         if (file.isDirectory())
         {
-            floders.push_back(file);
+            folders.push_back(file);
         }
         else
         {
@@ -106,13 +106,13 @@ void Frame_FileIndex::listDir(fs::FS &fs, const char *dirname)
         file = root.openNextFile();
     }
 
-    for(int n = 0; n < floders.size(); n++)
+    for(int n = 0; n < folders.size(); n++)
     {
         if(_key_files.size() > MAX_BTN_NUM)
         {
             break;
         }
-        File file = floders[n];
+        File file = folders[n];
         EPDGUI_Button *btn = new EPDGUI_Button(4, 100 + _key_files.size() * 60, 532, 61);
         _key_files.push_back(btn);
 
