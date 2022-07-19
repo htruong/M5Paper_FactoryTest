@@ -78,22 +78,22 @@ void Frame_FileIndex::listDir(fs::FS &fs, const char *dirname) {
     std::vector<File> files;
 
     File file = root.openNextFile();
-    while (file) {
+    while (file){
         if (file.isDirectory()) {
-            floders.push_back(file);
-        } else {
+            folders.push_back(file);
+        }
+        else {
             files.push_back(file);
         }
         file = root.openNextFile();
     }
 
-    for (int n = 0; n < floders.size(); n++) {
-        if (_key_files.size() > MAX_BTN_NUM) {
+    for(int n = 0; n < folders.size(); n++) {
+        if(_key_files.size() > MAX_BTN_NUM) {
             break;
         }
-        File file = floders[n];
-        EPDGUI_Button *btn =
-            new EPDGUI_Button(4, 100 + _key_files.size() * 60, 532, 61);
+        File file = folders[n];
+        EPDGUI_Button *btn = new EPDGUI_Button(4, 100 + _key_files.size() * 60, 532, 61);
         _key_files.push_back(btn);
 
         String filename(file.name());
