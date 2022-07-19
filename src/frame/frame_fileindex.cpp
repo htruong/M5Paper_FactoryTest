@@ -74,7 +74,7 @@ void Frame_FileIndex::listDir(fs::FS &fs, const char *dirname) {
         return;
     }
 
-    std::vector<File> floders;
+    std::vector<File> folders;
     std::vector<File> files;
 
     File file = root.openNextFile();

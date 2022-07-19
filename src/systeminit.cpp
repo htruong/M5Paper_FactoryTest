@@ -92,11 +92,18 @@ void SysInit_Start(void) {
     if (ret == false) {
         is_factory_test = true;
         SetInitStatus(0, 0);
-        // log_e("Failed to initialize SD card.");
+        log_e("Failed to initialize SD card.");
         // SysInit_UpdateInfo("[ERROR] Failed to initialize SD card.");
         // WaitForUser();
     } else {
+        log_d("SD card initialized OK.");
         is_factory_test = SD.exists("/__factory_test_flag__");
+
+        if (!SD.exists("/artcache") && !SD.mkdir("/artcache")) {
+            log_e("/artcache doesn't exist and dkdir /artcache failed!");
+        } else {
+            log_d("/artcache OK!");
+        }
     }
 
     SysInit_UpdateInfo("Initializing Touch pad...");
@@ -114,10 +121,10 @@ void SysInit_Start(void) {
         _initcanvas.loadFont("/font.ttf", SD);
         SetTTFLoaded(true);
     } else {
+        log_d("Custom font loaded.");
         _initcanvas.loadFont(binaryttf, sizeof(binaryttf));
         SetTTFLoaded(false);
         SetLanguage(LANGUAGE_EN);
-        is_factory_test = true;
     }
 
     if (is_factory_test) {
@@ -146,14 +153,13 @@ void SysInit_Start(void) {
         EPDGUI_AddFrame("Frame_WifiScan", frame_wifiscan);
         Frame_WifiPassword *frame_wifipassword = new Frame_WifiPassword();
         EPDGUI_AddFrame("Frame_WifiPassword", frame_wifipassword);
-        Frame_Lifegame *frame_lifegame = new Frame_Lifegame();
-        EPDGUI_AddFrame("Frame_Lifegame", frame_lifegame);
         Frame_Compare *frame_compare = new Frame_Compare();
         EPDGUI_AddFrame("Frame_Compare", frame_compare);
         Frame_Home *frame_home = new Frame_Home();
         EPDGUI_AddFrame("Frame_Home", frame_home);
 
         if (isWiFiConfiged()) {
+            log_d("Connecting to Wifi.");
             SysInit_UpdateInfo("Connect to " + GetWifiSSID() + "...");
             WiFi.begin(GetWifiSSID().c_str(), GetWifiPassword().c_str());
             uint32_t t = millis();
@@ -167,7 +173,11 @@ void SysInit_Start(void) {
                     break;
                 }
             }
+        } else {
+            log_d("No wifi configured.");
         }
+    } else {
+        log_d("is factory test is true.");
     }
 
     log_d("done");

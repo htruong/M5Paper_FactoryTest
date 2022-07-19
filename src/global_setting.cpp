@@ -16,9 +16,8 @@ esp_err_t __espret__;
     }
 
 const uint8_t *wallpapers[] = {
-    ImageResource_wallpaper_m5stack_540x960,
-    ImageResource_wallpaper_engine_540x960,
-    ImageResource_wallpaper_penrose_triangle_540x960};
+    ImageResource_wallpaper_engine_540x960
+};
 
 const uint8_t *kIMGLoading[16] = {
     ImageResource_item_loading_01_32x32, ImageResource_item_loading_02_32x32,
@@ -99,7 +98,12 @@ uint16_t GetWallpaperID(void) {
 }
 
 const uint8_t *GetWallpaper(void) {
-    return wallpapers[global_wallpaper];
+    if (global_wallpaper < sizeof(wallpapers) / sizeof(wallpapers[0])) {
+        return wallpapers[global_wallpaper];
+    } else {
+        log_e("Wallpaper out of bound %d.", global_wallpaper);
+        return wallpapers[0];
+    }
 }
 
 const char *GetWallpaperName(uint16_t wallpaper_id) {
